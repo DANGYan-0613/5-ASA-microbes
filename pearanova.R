@@ -12,7 +12,7 @@ library(ggpubr)
 library(dplyr)
 options(stringsAsFactors=F)
 
-df=read.delim("/Users/dangyan/Desktop/metagenomics/filtered_data_norm_beta.txt", sep="\t", header=TRUE)
+df=read.delim("/beta.txt", sep="\t", header=TRUE)
 # 统计每列非零值的数量
 non_zero_counts <- colSums(df != 0)
 
@@ -28,7 +28,7 @@ df_filtered <- df[, c(TRUE, column_sums >= 10)]
 df<-df_filtered
 
 
-sd <- read.table("/Users/dangyan/Desktop/covariable.txt", sep="\t",header=TRUE)
+sd <- read.table("/covariable.txt", sep="\t",header=TRUE)
 
 
 data<-inner_join(df, sd, by="sampleID")
