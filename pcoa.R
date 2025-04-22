@@ -1,5 +1,5 @@
 library(Rtsne)
-unifrac_dist <- read.table("/Users/dangyan/Desktop/metagenomics/taxonomy_selected_aitchison.tsv")
+unifrac_dist <- read.table("/taxonomy_selected_aitchison.tsv")
 # 使用 PCoA 进行降维分析
 ordination <- cmdscale(unifrac_dist, k = 2, eig = TRUE)
 
@@ -10,7 +10,7 @@ pcoa_df <- data.frame(PC1 = ordination$points[, 1],
 
 # 如果你有分组信息，添加到数据框中
 # 假设 sample_data 是你的样本元数据，包含分组信息
-sd <- read.table("/Users/dangyan/Desktop/covariable.txt", sep="\t",header=TRUE)
+sd <- read.table("/covariable.txt", sep="\t",header=TRUE)
 pcoa_df <- merge(pcoa_df, sd, by.x = "SampleID", by.y = "sampleID")
 
 library(ggplot2)
@@ -49,7 +49,7 @@ pcoa_df <- data.frame(PC1 = ordination$points[, 1],
                       SampleID = rownames(ordination$points))
 
 # 读取样本元数据，并合并分组信息
-sd <- read.table("/Users/dangyan/Desktop/covariable.txt", sep="\t", header = TRUE)
+sd <- read.table("/covariable.txt", sep="\t", header = TRUE)
 pcoa_df <- merge(pcoa_df, sd, by.x = "SampleID", by.y = "sampleID")
 # 自定义颜色向量，假设分组 0 是蓝色，分组 1 是红色
 group_colors <- c("0" = "#add9ee", "1" = "#ffd47f")
@@ -145,52 +145,4 @@ print(nmds_plot)
 
 # 显示图形
 print(nmds_plot)
-
-# 假设 unifrac_dist 是你的 UniFrac 距离矩阵
-# 假设 sample_data 是包含分组信息的元数据
-
-# 确保元数据的顺序与距离矩阵匹配
-sd <- sd[match(rownames(unifrac_dist), sd$sampleID), ]
-
-# 进行 PERMANOVA 分析
-adonis_result <- adonis2(unifrac_dist ~ extent, data = sd, permutations = 9999)
-
-# 查看 PERMANOVA 结果
-print(adonis_result)
-
-grouping_vector <- sd$group
-
-# 使用 ANOSIM 进行分析
-anosim_result <- anosim(unifrac_dist, grouping_vector, permutations = 999)
-
-# 打印 ANOSIM 结果
-print(anosim_result)
-
-# 使用 MRPP 进行分析
-mrpp_result <- mrpp(unifrac_dist, grouping_vector, permutations = 999)
-
-# 打印 MRPP 结果
-print(mrpp_result)
-
-library(Rtsne)
-
-# t-SNE 分析
-tsne_result <- Rtsne(as.dist(unifrac_dist), dims = 2, perplexity = 5, verbose = TRUE, max_iter = 1000)
-
-# 绘制 t-SNE 结果
-plot(tsne_result$Y, col = as.factor(sd$group), pch = 19, main = "t-SNE on UniFrac Distances")
-
-# 使用 cmdscale 计算 MDS
-mds_result <- cmdscale(unifrac_dist, k = 2)
-
-# 绘制 MDS 结果
-plot(mds_result, xlab = "MDS1", ylab = "MDS2", main = "MDS on UniFrac Distances")
-
-library(lle)
-
-# 使用 LLE 进行降维
-lle_result <- lle(as.matrix(unifrac_dist), m = 2, k = 10)
-
-# 绘制 LLE 结果
-plot(lle_result$Y, main = "LLE on UniFrac Distances", xlab = "LLE1", ylab = "LLE2")
 
